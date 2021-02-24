@@ -3,17 +3,17 @@ module Evaluator where
 import Expression
 import Primitives
 
-eval :: Expression -> Expression
-eval n@(Number _) = n
-eval s@(Symbol _) = s
-eval (SExpr es)   = apply $ SExpr (map eval es)
+eval :: Expression -> Either String Expression
+eval n@(Number _) = Right n
+eval s@(Symbol _) = Right s
+eval (SExpr es)   = mapM eval es >>= apply . SExpr
 
-apply :: Expression -> Expression
+apply :: Expression -> Either String Expression
 apply (SExpr (f:args)) = case f of
-  Symbol "+" -> pAdd args
-  Symbol "-" -> pSub args
-  Symbol "*" -> pMul args
-  Symbol "/" -> pDiv args
-  Symbol _     -> error "no primitive functions not supported"
-  _            -> error "object not applicable"
-apply _                = error "Object not applicable"
+  Symbol "+" -> Right $ pAdd args
+  Symbol "-" -> Right $ pSub args
+  Symbol "*" -> Right $ pMul args
+  Symbol "/" -> Right $ pDiv args
+  Symbol _     -> Left "no primitive functions not supported (only +, -, * and /)"
+  _            -> Left "object not applicable"
+apply _                = Left "object not applicable"

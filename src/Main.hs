@@ -16,6 +16,7 @@ main = runInputT defaultSettings repl
                 Left err -> do
                   outputStrLn $ show err
                   repl
-                Right e -> do
-                  outputStrLn . show $ eval e
-                  repl
+                Right e -> outputStrLn (case eval e of
+                  Right out -> show out
+                  Left err -> err)
+          repl
