@@ -18,5 +18,4 @@ main = runInputT defaultSettings repl
                   repl
                 Right e -> outputStrLn (case eval e of
                   Right out -> show out
-                  Left err -> err)
-          repl
+                  Left err -> err) >> repl
