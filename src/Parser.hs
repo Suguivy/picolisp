@@ -1,7 +1,6 @@
 module Parser where
 
 import Text.ParserCombinators.Parsec
-import Data.Char
 
 import Expression
 
@@ -11,11 +10,11 @@ parseExpression s = do
   e <- parse anyExpressionParser "" s
   return e
 
--- Parser any possible expression
+-- Parser for any possible expression
 anyExpressionParser :: GenParser Char st Expression
 anyExpressionParser = numberParser <|> symbolParser <|> sexprParser
 
--- Parses an S-expr
+-- Parser for an S-expr
 sexprParser :: GenParser Char st Expression
 sexprParser = do
   _ <- spaces
@@ -25,7 +24,7 @@ sexprParser = do
   _ <- char ')' >> spaces
   return $ SExpr es
 
--- Parses a symbol
+-- Parser for a symbol
 symbolParser :: GenParser Char st Expression
 symbolParser = Symbol <$> do
   c <- symbolChar
@@ -33,7 +32,7 @@ symbolParser = Symbol <$> do
   return $ c:cs
     where symbolChar = letter <|> oneOf "!#$%&*+-/:<=>?@\\^_`~"
 
--- Parses a number
+-- Parser for a number
 numberParser :: GenParser Char st Expression
 numberParser = do
   num <- read <$> many1 digit
