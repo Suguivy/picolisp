@@ -35,5 +35,10 @@ symbolParser = Symbol <$> do
 -- Parser for a number
 numberParser :: GenParser Char st Expression
 numberParser = do
-  num <- read <$> many1 digit
-  return $ Number num
+  intPart <- many1 digit
+  decPart <- option "" parseDecPart
+  return $ Number $ read (intPart ++ decPart)
+  where parseDecPart = do
+          p <- char '.'
+          dec <- many digit
+          return $ p:dec
